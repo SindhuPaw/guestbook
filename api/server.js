@@ -1,40 +1,41 @@
 const express = require('express');
-const { kv } = require('@vercel/kv'); // Impor Vercel KV
+const { kv } = require('@vercel/kv');
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// Memberitahu server untuk menggunakan file di folder 'public'
 app.use(express.static('public'));
 
-// Route untuk MENDAPATKAN semua pesan dari database KV
 app.get('/messages', async (req, res) => {
     try {
-        // Mengambil semua item dari list 'messages' di database
         const messages = await kv.lrange('messages', 0, -1);
         res.json(messages);
     } catch (error) {
+        console.error("ERROR SAAT MENGAMBIL PESAN:", error);
         res.status(500).json({ error: 'Gagal mengambil pesan' });
     }
 });
 
-// Route untuk MENAMBAHKAN pesan baru ke database KV
 app.post('/messages', async (req, res) => {
+    // LOG PALING AWAL: Apakah fungsi ini bahkan dijalankan?
+    console.log("Fungsi POST /messages dipanggil. Body request:", req.body);
+
     const newMessage = req.body.message;
-    if (newMessage) {
-        try {
-            // Menyimpan pesan baru ke list 'messages' di database
-            await kv.lpush('messages', newMessage);
-        } catch (error) {
-            // BARIS PENTING: Cetak error yang sebenarnya ke log server
-            console.error("DETAIL ERROR SAAT MENYIMPAN KE KV:", error); 
-            
-            return res.status(500).send('Gagal menyimpan pesan');
-        }
+
+    if (!newMessage) {
+        console.log("Pesan tidak ditemukan di body, proses dihentikan.");
+        return res.status(400).send('Pesan tidak boleh kosong.');
     }
-    res.redirect('/'); // Arahkan kembali ke halaman utama
+    
+    try {
+        console.log(`Mencoba menyimpan pesan: "${newMessage}"`);
+        await kv.lpush('messages', newMessage);
+        console.log("Pesan berhasil disimpan.");
+        res.redirect('/');
+    } catch (error) {
+        console.error("DETAIL ERROR SAAT MENYIMPAN KE KV:", error);
+        return res.status(500).send('Gagal menyimpan pesan');
+    }
 });
 
-// PENTING: Hapus app.listen() dan ekspor 'app' untuk Vercel
 module.exports = app;
