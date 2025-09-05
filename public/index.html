@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Guestbook Digital</title>
+</head>
+<body>
+    <h1>Guestbook Digital</h1>
+    
+    <form action="/messages" method="POST">
+        <input type="text" name="message" placeholder="Tulis pesan Anda..." required>
+        <button type="submit">Kirim</button>
+    </form>
+
+    <h2>Pesan:</h2>
+    <div id="message-list"></div>
+
+    <script>
+        // Script untuk mengambil dan menampilkan pesan
+        async function fetchMessages() {
+            const response = await fetch('/messages');
+            const messages = await response.json();
+            const messageList = document.getElementById('message-list');
+            messageList.innerHTML = ''; // Kosongkan daftar sebelum diisi ulang
+            messages.forEach(msg => {
+                const p = document.createElement('p');
+                p.textContent = msg;
+                messageList.appendChild(p);
+            });
+        }
+        // Panggil fungsi saat halaman dimuat
+        fetchMessages();
+    </script>
+</body>
+</html>
