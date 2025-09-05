@@ -17,7 +17,7 @@ app.get('/messages', async (req, res) => {
 });
 
 app.post('/messages', async (req, res) => {
-    // LOG PALING AWAL: Apakah fungsi ini bahkan dijalankan?
+    // LOG PALING AWAL: Apakah fungsi ini bahkan dijalankan
     console.log("Fungsi POST /messages dipanggil. Body request:", req.body);
 
     const newMessage = req.body.message;
