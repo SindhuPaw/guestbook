@@ -19,6 +19,7 @@
   "homepage": "https://github.com/SindhuPaw/guestbook#readme",
   "dependencies": {
     "@vercel/kv": "^3.0.0",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "redis": "^5.8.2"
   }
 }
