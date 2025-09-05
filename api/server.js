@@ -27,6 +27,9 @@ app.post('/messages', async (req, res) => {
             // Menyimpan pesan baru ke list 'messages' di database
             await kv.lpush('messages', newMessage);
         } catch (error) {
+            // BARIS PENTING: Cetak error yang sebenarnya ke log server
+            console.error("DETAIL ERROR SAAT MENYIMPAN KE KV:", error); 
+            
             return res.status(500).send('Gagal menyimpan pesan');
         }
     }
